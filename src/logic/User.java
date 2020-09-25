@@ -12,7 +12,7 @@ package logic;
 public class User {
 
     private int idUser;
-    private String account, password, typeUser, recoverInfo;
+    private String account, name, password, typeUser, recoverInfo;
 
     public int getIdUser() {
         return idUser;
@@ -32,6 +32,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setPassword(String password) {

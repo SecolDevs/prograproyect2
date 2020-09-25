@@ -11,15 +11,24 @@ import java.util.ArrayList;
  *
  * @author Sebastian
  */
-public class handleData {
+public class HandleData {
 
     private ArrayList<User> db = new ArrayList<>();
     private User usuario;
     private boolean isLoged;
     private String logedUser;
 
-    public void verifyUser(String[] data) {
+    public void insertData(String[] data) { // LLama a los metodos sin importar detalle
+        if (verifyUser(data)) {
+            addUser(data);
+            listUsers();
+            findUser();
+            logoutUser();
+        }
+    }
 
+    public boolean verifyUser(String[] data) {
+        return true;
     }
 
     public void addUser(String[] data) {
