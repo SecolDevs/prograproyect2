@@ -11,15 +11,17 @@ package logic;
  */
 public class User {
 
-    private int idUser;
     private String account, name, password, typeUser, recoverInfo;
 
-    public int getIdUser() {
-        return idUser;
+    public User(String account, String name, String password, String typeUser, String recoverInfo) {
+        this.account = account;
+        this.name = name;
+        this.password = password;
+        this.typeUser = typeUser;
+        this.recoverInfo = recoverInfo;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public User() {
     }
 
     public String getAccount() {

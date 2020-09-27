@@ -15,48 +15,63 @@ public class HandleData {
 
     private ArrayList<User> db = new ArrayList<>();
     private User usuario;
-    private boolean isLoged;
-    private String logedUser;
 
-    public void insertData(String[] data) { // LLama a los metodos sin importar detalle
-        if (verifyUser(data)) {
-            addUser(data);
-            listUsers();
-            findUser();
-            logoutUser();
+    public void insertAdmins() {
+        usuario = new User("admin1@mail.com", "Admin 1", "root", "admin", "admon");
+        addUsers(usuario);
+        usuario = new User("admin2@mail.com", "Admin 2", "root", "admin", "admon");
+        addUsers(usuario);
+        usuario = new User("user1@mail.com", "Usuario 1", "user", "user", "usor");
+        addUsers(usuario);
+    }
+
+    public void signUpUser() {
+
+    }
+
+    public void forgotPass() {
+
+    }
+
+    public void restartPass() {
+
+    }
+
+    public void changePass() {
+
+    }
+
+    public String[] finOneUser(int index) {
+        String data[] = {db.get(index).getAccount(), db.get(index).getPassword(), db.get(index).getName(), db.get(index).getRecoverInfo(), db.get(index).getTypeUser()};
+        return data;
+    }
+
+    public String[] listUsers() {
+        String[] users = new String[db.size()];
+
+        for (int i = 0; i < db.size(); i++) {
+            users[i] = "Cuenta: " + db.get(i).getAccount() + " |Nombres: " + db.get(i).getName() + " |Tipo: " + db.get(i).getTypeUser();
         }
-    }
 
-    public boolean verifyUser(String[] data) {
-        return true;
-    }
-
-    public void addUser(String[] data) {
+        return users;
 
     }
 
-    public void listUsers() {
+    public int getIndex(String userName) {
+        int index = 0;
+        for (int i = 0; i < db.size(); i++) {
+            if (db.get(i).getAccount().equals(userName)) {
+                index = i;
 
+                i += db.size();
+            }
+        }
+
+        return index;
     }
 
-    public void findUser() {
-
-    }
-
-    public void loginUser() {
-
-    }
-
-    public void logoutUser() {
-
-    }
-
-    public void restorePass() {
-
-    }
-
-    public void deleteUser() {
-
+    public void addUsers(User usuario) {
+        db.add(usuario);
     }
 
 }

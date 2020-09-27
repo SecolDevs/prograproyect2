@@ -9,12 +9,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import logic.Ops;
 
 /**
  *
  * @author Sebastian
  */
 public class View {
+
+    // Var
+    Ops op = new Ops();
+    String[] emptyData = {""};
 
     // Inicializacion de Frames
     JFrame frame = new JFrame("GESTION DE CORREOS");
@@ -30,12 +35,13 @@ public class View {
 
     // Clase Principal
     public void run() {
+        op.initUsers();
         ventana();
-        render("login");
+        render("login", emptyData);
     }
 
     // Renderizado Condicional de Componentes
-    public void render(String state) {
+    public void render(String state, String[] data) {
         clearView();
         switch (state) {
             case "login":
@@ -48,10 +54,10 @@ public class View {
                 forgotPassword();
                 break;
             case "admin":
-                admin();
+                admin(data);
                 break;
             case "user":
-                user();
+                user(data);
                 break;
             default:
                 login();
@@ -93,7 +99,7 @@ public class View {
         signUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("signUp");
+                render("signUp", emptyData);
             }
         });
 
@@ -101,16 +107,14 @@ public class View {
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("admin");
-            }
-        });
+                String[] response = op.loginUser(userName.getText(), new String(password.getPassword()));
 
-        // ------------ delete
-        JButton userB = new JButton("Usuario");
-        userB.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                render("user");
+                if (response[1].equals("yes")) {
+                    render(response[2], op.getAllData(userName.getText()));
+                } else {
+                    JOptionPane.showMessageDialog(null, response[0], "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
 
@@ -119,7 +123,7 @@ public class View {
         forgetPass.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("forget");
+                render("forget", emptyData);
             }
         });
 
@@ -131,7 +135,6 @@ public class View {
         panel.add(signUp);
         panel.add(login);
         panel.add(forgetPass);
-        panel.add(userB);
     }
 
     // VISTA CREAR CUENTA
@@ -149,7 +152,7 @@ public class View {
         signUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("login");
+                render("login", emptyData);
             }
         });
 
@@ -204,7 +207,7 @@ public class View {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("login");
+                render("login", emptyData);
             }
         });
 
@@ -219,7 +222,11 @@ public class View {
     }
 
     // VISTA DE ADMIN
-    public void admin() {
+    public void admin(String[] data) {
+
+        // Listado
+        JList list = new JList(op.getUsers());
+        
         // Buttons
         panel.setLayout(new FlowLayout());
         JButton findOneB = new JButton("Buscar Correo");
@@ -234,7 +241,7 @@ public class View {
         logoutB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("login");
+                render("login", emptyData);
             }
         });
 
@@ -242,6 +249,7 @@ public class View {
         panel.add(findOneB);
         panel.add(logoutB);
         panel.add(new JLabel("---- Listando .... -----"));
+        panel.add(new JScrollPane(list));
     }
 
     // ADMIN: Buscar 1 Usuario
@@ -283,7 +291,7 @@ public class View {
         affirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("admin");
+                render("admin", emptyData);
             }
         });
 
@@ -304,12 +312,16 @@ public class View {
     }
 
     // VISTA DE USUARIO
-    public void user() {
+    public void user(String[] data) {
         panel.setLayout(new FlowLayout());
         // Inputs
         JTextField account = new JTextField(20);
         JTextField name = new JTextField(20);
         JTextField recoverInf = new JTextField(20);
+
+        account.setText(data[0]);
+        name.setText(data[2]);
+        recoverInf.setText(data[3]);
 
         // Buttons
         JButton affirm = new JButton("Aceptar");
@@ -326,7 +338,7 @@ public class View {
         delete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("login");
+                render("login", emptyData);
             }
         });
 
@@ -334,13 +346,13 @@ public class View {
         logout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("login");
+                render("login", emptyData);
             }
         });
 
         // Panel Components
-        panel.add(new JLabel("Cuenta de Usuario: "));
-        panel.add(account);
+        panel.add(new JLabel("Cuenta de Usuario: " + data[0]));
+        //panel.add(account);
         panel.add(new JLabel("Nombres y Apellidos: "));
         panel.add(name);
         panel.add(new JLabel("Nombre de su Primera Mascota: "));
@@ -365,7 +377,7 @@ public class View {
         cancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("user");
+                render("user", emptyData);
             }
         });
 
@@ -373,7 +385,7 @@ public class View {
         confirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("user");
+                render("user", emptyData);
             }
         });
 
