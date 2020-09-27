@@ -42,31 +42,26 @@ public class HandleData {
     }
 
     public String[] finOneUser(int index) {
-        String data[] = {db.get(index).getAccount(), db.get(index).getPassword(), db.get(index).getName(), db.get(index).getRecoverInfo(), db.get(index).getTypeUser()};
+        String data[] = {String.valueOf(index), db.get(index).getAccount(), db.get(index).getPassword(), db.get(index).getName(), db.get(index).getRecoverInfo(), db.get(index).getTypeUser()};
         return data;
     }
 
     public String[] listUsers() {
         String[] users = new String[db.size()];
-
         for (int i = 0; i < db.size(); i++) {
             users[i] = "Cuenta: " + db.get(i).getAccount() + " |Nombres: " + db.get(i).getName() + " |Tipo: " + db.get(i).getTypeUser();
         }
-
         return users;
-
     }
 
     public int getIndex(String userName) {
-        int index = 0;
+        int index = -1;
         for (int i = 0; i < db.size(); i++) {
             if (db.get(i).getAccount().equals(userName)) {
                 index = i;
-
                 i += db.size();
             }
         }
-
         return index;
     }
 

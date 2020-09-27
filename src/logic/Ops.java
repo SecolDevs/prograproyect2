@@ -22,19 +22,28 @@ public class Ops {
 
     public String[] loginUser(String userName, String password) {
         String[] response = new String[3];
-        if (userName.trim().length() == 0 || password.trim().length() == 0) {
+        if (userName.trim().isEmpty() || password.trim().isEmpty()) {
             response[0] = "Ambos campos son Obligatorios";
             response[1] = "no";
-        } else if (verifyMail(userName, password)) {
-            boolean verif = verifyLogin(userName, password);
-            response[0] = verif ? "Correcto" : "Usuario o Contraseña Incorrectos";
-            response[1] = verif ? "yes" : "no";
-            response[2] = getAllData(userName)[4];
+        } else if (verifyIndex(userName)) {
+            if (verifyMail(userName, password)) {
+                boolean verif = verifyLogin(userName, password);
+                response[0] = verif ? "Correcto" : "Usuario o Contraseña Incorrectos";
+                response[1] = verif ? "yes" : "no";
+                response[2] = getAllData(userName)[5];
+            } else {
+                response[0] = "Email Incorrecto, Verifique e intente nuevamente";
+                response[1] = "no";
+            }
         } else {
-            response[0] = "Email Incorrecto, Verifique e intente nuevamente";
+            response[0] = "Usuario o Contraseña Incorrectos";
             response[1] = "no";
         }
         return response;
+    }
+
+    public void changeUser() {
+
     }
 
     public boolean verifyMail(String userName, String password) {
@@ -43,7 +52,11 @@ public class Ops {
 
     public boolean verifyLogin(String userName, String password) {
         String[] data = hData.finOneUser(hData.getIndex(userName));
-        return data[0].equals(userName) && data[1].equals(password);
+        return data[1].equals(userName) && data[2].equals(password);
+    }
+
+    public boolean verifyIndex(String userName) {
+        return hData.getIndex(userName) >= 0;
     }
 
     public String[] getAllData(String userName) {

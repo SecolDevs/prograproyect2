@@ -108,13 +108,11 @@ public class View {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] response = op.loginUser(userName.getText(), new String(password.getPassword()));
-
                 if (response[1].equals("yes")) {
                     render(response[2], op.getAllData(userName.getText()));
                 } else {
                     JOptionPane.showMessageDialog(null, response[0], "Incorrecto", JOptionPane.ERROR_MESSAGE);
                 }
-
             }
         });
 
@@ -226,7 +224,7 @@ public class View {
 
         // Listado
         JList list = new JList(op.getUsers());
-        
+
         // Buttons
         panel.setLayout(new FlowLayout());
         JButton findOneB = new JButton("Buscar Correo");
@@ -265,26 +263,45 @@ public class View {
         search.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                findedUser();
+                if (mailFind.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                } else if (op.verifyIndex(mailFind.getText())) {
+                    String[] data = op.getAllData(mailFind.getText());
+                    findedUser(data);
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se Encuentra el Correo Solicitado", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        JButton back = new JButton("Atras");
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                render("admin", emptyData);
             }
         });
 
         // Panel Components
         panel.add(new JLabel("Correo a Buscar"));
         panel.add(mailFind);
+        panel.add(back);
         panel.add(search);
 
         fillView();
     }
 
     // ADMIN: Usuario Filtrado
-    public void findedUser() {
+    public void findedUser(String[] data) {
         clearView();
 
         // Inputs
         panel.setLayout(new FlowLayout());
         JTextField account = new JTextField(20);
         JTextField name = new JTextField(20);
+
+        account.setText(data[1]);
+        name.setText(data[3]);
 
         // Buttons
         JButton affirm = new JButton("Aceptar");
@@ -319,9 +336,9 @@ public class View {
         JTextField name = new JTextField(20);
         JTextField recoverInf = new JTextField(20);
 
-        account.setText(data[0]);
-        name.setText(data[2]);
-        recoverInf.setText(data[3]);
+        account.setText(data[1]);
+        name.setText(data[3]);
+        recoverInf.setText(data[4]);
 
         // Buttons
         JButton affirm = new JButton("Aceptar");
@@ -351,8 +368,8 @@ public class View {
         });
 
         // Panel Components
-        panel.add(new JLabel("Cuenta de Usuario: " + data[0]));
-        //panel.add(account);
+        panel.add(new JLabel("Cuenta de Usuario: "));
+        panel.add(account);
         panel.add(new JLabel("Nombres y Apellidos: "));
         panel.add(name);
         panel.add(new JLabel("Nombre de su Primera Mascota: "));
