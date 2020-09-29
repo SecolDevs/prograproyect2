@@ -150,6 +150,39 @@ public class View {
         signUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String name = nombres.getText();
+                String account = email.getText();
+                String passN = new String(pass.getPassword());
+                String passC = new String(passComp.getPassword());
+                String recover = recovery.getText();
+
+                if (!(name.trim().isEmpty() || account.trim().isEmpty() || passN.trim().isEmpty() || passC.trim().isEmpty() || recover.trim().isEmpty())) {
+                    if (op.verifyMail(account)) {
+                        if (op.veryPass(passC, passC)) {
+                            if (!(passC.length() < 6)) {
+                                String[] data = {account, name, passN, recover};
+                                op.createuser(data);
+                                JOptionPane.showMessageDialog(null, "Cuenta Creada con Exito", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                                render("login", emptyData);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Contraseña Demasiado Debil", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Contraseña No Coincide", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Email Incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos los Campos son Obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        JButton back = new JButton("Atras");
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 render("login", emptyData);
             }
         });
@@ -161,10 +194,11 @@ public class View {
         panel.add(email);
         panel.add(new JLabel("Contraseña: "));
         panel.add(pass);
-        panel.add(new JLabel("Comprobar Contraseña: "));
+        panel.add(new JLabel("Confirmar Contraseña: "));
         panel.add(passComp);
         panel.add(new JLabel("Nombre de su Primera Mascota"));
         panel.add(recovery);
+        panel.add(back);
         panel.add(signUp);
     }
 
@@ -180,7 +214,29 @@ public class View {
         forgotButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                forgotPassword2();
+                String userName = forgotMail.getText();
+                String answer = forgotQuest.getText();
+                if (!(userName.trim().isEmpty() || answer.trim().isEmpty())) {
+                    if (op.verifyIndex(userName)) {
+                        if (op.verifyForget(userName, answer)) {
+                            changePass(op.getAllData(userName));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Incorrecto, verifique e intente nuevamente", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Email Incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ambos campos son obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        JButton back = new JButton("Atras");
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                render("login", emptyData);
             }
         });
 
@@ -189,39 +245,12 @@ public class View {
         panel.add(forgotMail);
         panel.add(new JLabel("Nombre de su Primera Mascota"));
         panel.add(forgotQuest);
+        panel.add(back);
         panel.add(forgotButton);
-    }
-
-    // LOGIN: Olvido contraseña 2
-    public void forgotPassword2() {
-        clearView();
-        // Inputs
-        panel.setLayout(new FlowLayout());
-        JTextField newPass = new JTextField(20);
-        JTextField confirmPass = new JTextField(20);
-
-        // Buttons
-        JButton confirmButton = new JButton("Confirmar");
-        confirmButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                render("login", emptyData);
-            }
-        });
-
-        // Panel Components
-        panel.add(new JLabel("Nueva Contraseña: "));
-        panel.add(newPass);
-        panel.add(new JLabel("Confirme Contraseña: "));
-        panel.add(confirmPass);
-        panel.add(confirmButton);
-
-        fillView();
     }
 
     // VISTA DE ADMIN
     public void admin(String[] data) {
-
         // Listado
         JList list = new JList(op.getUsers());
 
@@ -263,13 +292,19 @@ public class View {
         search.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (mailFind.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
-                } else if (op.verifyIndex(mailFind.getText())) {
-                    String[] data = op.getAllData(mailFind.getText());
-                    findedUser(data);
+                if (!mailFind.getText().trim().isEmpty()) {
+                    if (op.verifyMail(mailFind.getText())) {
+                        if (op.verifyIndex(mailFind.getText())) {
+                            String[] data = op.getAllData(mailFind.getText());
+                            findedUser(data);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se Encuentra el Correo Solicitado", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Formato de Email Incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "No se Encuentra el Correo Solicitado", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -308,13 +343,34 @@ public class View {
         affirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("admin", emptyData);
+                if (op.updateUser(account.getText(), name.getText(), data[4], data)) {
+                    JOptionPane.showMessageDialog(null, "Correcto, se ha actualizado el Usuario", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                    render("admin", emptyData);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Incorrecto, verifique e intente nuevamente", "Incorrecto", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 
         JButton restorePass = new JButton("Restaurar Contraseña");
+        restorePass.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                op.reestartPass(data);
+                JOptionPane.showMessageDialog(null, "Correcto, se ha reestablecido la contraseña", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                render("admin", emptyData);
+            }
+        });
 
         JButton delete = new JButton("Eliminar");
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                op.removeUser(data);
+                JOptionPane.showMessageDialog(null, "Correcto, se ha eliminado el usuario", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                render("admin", emptyData);
+            }
+        });
 
         // Panel Components
         panel.add(new JLabel("Cuenta de Usuario:"));
@@ -342,12 +398,22 @@ public class View {
 
         // Buttons
         JButton affirm = new JButton("Aceptar");
+        affirm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (op.updateUser(account.getText(), name.getText(), recoverInf.getText(), data)) {
+                    JOptionPane.showMessageDialog(null, "Correcto, se ha actualizado el Usuario", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Incorrecto, verifique e intente nuevamente", "Incorrecto", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
 
         JButton restorePass = new JButton("Cambiar Contraseña");
         restorePass.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                changePass();
+                changePass(op.getAllData(account.getText()));
             }
         });
 
@@ -355,6 +421,8 @@ public class View {
         delete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                op.removeUser(data);
+                JOptionPane.showMessageDialog(null, "Correcto, se ha eliminado el usuario", "Correcto", JOptionPane.QUESTION_MESSAGE);
                 render("login", emptyData);
             }
         });
@@ -381,20 +449,20 @@ public class View {
     }
 
     // USUARIO: Cambiar Contraseña
-    public void changePass() {
+    public void changePass(String[] data) {
         clearView();
 
         // Inputs
         panel.setLayout(new FlowLayout());
-        JTextField pass = new JTextField(20);
-        JTextField passC = new JTextField(20);
+        JPasswordField pass = new JPasswordField(20);
+        JPasswordField passC = new JPasswordField(20);
 
         // Buttons
         JButton cancel = new JButton("Cancelar");
         cancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("user", emptyData);
+                render("user", data);
             }
         });
 
@@ -402,7 +470,22 @@ public class View {
         confirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                render("user", emptyData);
+                String passN = new String(pass.getPassword());
+                String passCo = new String(passC.getPassword());
+                if (!(passN.trim().isEmpty() || passCo.trim().isEmpty())) {
+                    if (passN.length() < 6) {
+                        JOptionPane.showMessageDialog(null, "Contraseña Demasiado Debil", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        if (op.verifyChangePass(data, passN, passCo)) {
+                            JOptionPane.showMessageDialog(null, "Correcto, se ha cambiado la contraseña", "Correcto", JOptionPane.QUESTION_MESSAGE);
+                            render("login", emptyData);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Incorrecto, contraseña no coincide", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ambos campos son obligatorios", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
