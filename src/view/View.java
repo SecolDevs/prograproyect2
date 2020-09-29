@@ -356,7 +356,7 @@ public class View {
         restorePass.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                op.reestartPass(data);
+                op.restart(data);
                 JOptionPane.showMessageDialog(null, "Correcto, se ha reestablecido la contraseña", "Correcto", JOptionPane.QUESTION_MESSAGE);
                 render("admin", emptyData);
             }

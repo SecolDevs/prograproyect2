@@ -83,7 +83,7 @@ public class Ops {
     }
 
     // Reestablecer contraseña
-    public void reestartPass(String[] userData) {
+    public void restart(String[] userData) {
         userData[2] = "123@321";
         hData.updateUser(Integer.parseInt(userData[0]), userData);
     }
